@@ -11,6 +11,7 @@ import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
+	var apiKey = "AIzaSyAZsMlB2tJ1N0P35QLLLDGypL47wqIUlZU"
 	var detailViewController: DetailViewController? = nil
 	var managedObjectContext: NSManagedObjectContext? = nil
 
@@ -18,15 +19,137 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
+		
+		/*
+		//create edit button
 		navigationItem.leftBarButtonItem = editButtonItem
 
+		//create add button
 		let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
 		navigationItem.rightBarButtonItem = addButton
+		
 		if let split = splitViewController {
 		    let controllers = split.viewControllers
 		    detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
 		}
+*/
 	}
+	
+	
+	@IBAction func addItem(_ sender: Any) {
+		print("adding item")
+		
+		let actionSheet = UIAlertController(title: "Select Book Entry Method", message: "Select and entry method for book search.", preferredStyle: .actionSheet)
+		
+		let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+		
+		let search = UIAlertAction(title: "Search Google Books", style: .default) { action in
+			//searching
+		}
+		
+		let barcode = UIAlertAction(title: "Scan Barcode", style: .default) { action in
+			//scan barcode
+		}
+		
+		let manual = UIAlertAction(title: "Enter Manually", style: .default) { action in
+			//enter manually
+		}
+		
+		actionSheet.addAction(search)
+		actionSheet.addAction(barcode)
+		actionSheet.addAction(manual)
+		actionSheet.addAction(cancel)
+		present(actionSheet, animated: true, completion: nil)
+		/*
+		
+		let url = URL(string: "https://www.googleapis.com/blogger/v3/blogs/10861780/posts?key=\(apiKey)")
+		
+		let task = URLSession.shared.dataTask(with: url!) { (data, response, error) in
+		
+		if error != nil{
+		print(error)
+		}else{
+		
+		if let urlContent = data{
+		
+		do{
+		let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: Any]
+		//print(jsonResult)
+		
+		if let items = jsonResult!["items"] as? NSArray {
+		
+		let context = self.fetchedResultsController.managedObjectContext
+		
+		let request = NSFetchRequest<Event>(entityName: "Event")
+		
+		do {
+		let results = try context.fetch(request)
+		if results.count > 0{
+		for result in results {
+		context.delete(result)
+		do{
+		try context.save()
+		}
+		catch{
+		print("Specific delete failed!")
+		}
+		}
+		}
+		} catch {
+		print("Delete failed")
+		}
+		
+		
+		for item in items {
+		
+		let title = (item as! NSDictionary )["title"] as! String
+		let published = (item as! NSDictionary )["published"] as! String
+		let content = (item as! NSDictionary )["content"] as! String
+		
+		
+		let newEvent = Event(context: context)
+		
+		// If appropriate, configure the new managed object.
+		newEvent.timestamp = Date()
+		newEvent.setValue(title, forKey: "title")
+		newEvent.setValue(published, forKey: "published")
+		newEvent.setValue(content, forKey: "content")
+		
+		// Save the context.
+		do {
+		try context.save()
+		} catch {
+		// Replace this implementation with code to handle the error appropriately.
+		// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+		let nserror = error as NSError
+		fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+		}
+		
+		}
+		
+		DispatchQueue.main.async(execute: {
+		self.tableView.reloadData()
+		})
+		}
+		
+		} catch{
+		print("JSON processing failed")
+		}
+		}
+		}
+		}
+		task.resume(
+		
+		*/
+		
+	}
+	
+	
+	@IBAction func editList(_ sender: Any) {
+		navigationItem.leftBarButtonItem = editButtonItem
+	}
+	
+	
 
 	override func viewWillAppear(_ animated: Bool) {
 		clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
