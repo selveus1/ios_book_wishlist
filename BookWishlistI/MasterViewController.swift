@@ -45,6 +45,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 		
 		let search = UIAlertAction(title: "Search Google Books", style: .default) { action in
 			//searching
+			
+			self.performSegue(withIdentifier: "SearchOption", sender: self)
 		}
 		
 		let barcode = UIAlertAction(title: "Scan Barcode", style: .default) { action in
